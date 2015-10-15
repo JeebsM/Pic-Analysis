@@ -1,0 +1,42 @@
+from PIL import Image
+i = Image.open(" ") #Name and extension of the picture to analyze
+
+pixels = i.load() # this is not a list, nor is it list()'able
+width, height = i.size
+largeur = width
+
+listeCode = []
+fichier = open(" .js", "a") #Creating a file .js to receive the data
+intro = " = [ \n" #Naming the variable
+fichier.write(intro)
+for x in range(width):
+    texte = "Traitement de la ligne " + str(x) + " sur " + str(largeur) #A way to know where the script is on the picture
+    print(texte)
+    #Treating each pixel one by one thanks to its RGB code and putting the result in corresponding interval
+    for y in range(height):
+        code = ["003 ","011 ","019 ","027 ","035 ","043 ","051 ","059 ","067 ","075 ","083 ","091 ","099 ","107 ","115 ","123 ","131 ","139 ","147 ","155 ","163 ","171 ","179 ","187 ","195 ","203 ","211 ","219 ","227 ","235 ","243 ","251 "]
+        cpixel = pixels[x, y]
+        rouge = int(cpixel[0])
+        vert = int(cpixel[1])
+        bleu = int(cpixel[2])
+        indexR = rouge//8
+        indexV = vert//8
+        indexB = bleu//8
+        codeR = code[indexR]
+        codeV = code[indexV]
+        codeB = code[indexB]
+        #Adding the result (mean color of the interval) to a list
+        code = codeR + codeV + codeB
+        listeCode.append(code)
+dictCode = {}.fromkeys(set(listeCode),0) #Creating a dictionnary to store colors and attributing the number of occurrences in the picture
+for valeur in listeCode:
+    dictCode[valeur] += 1
+#Writing the .js file in order to use it with javascript (web dataviz)
+for key, value in dictCode.iteritems():
+    cle = key
+    nombre = str(value)
+    resultat = "{\"code\": \"" + cle + "\" , \"nombre\": " + nombre + "},\n"
+    fichier.write(resultat)
+outro = "];"
+fichier.write(outro)
+fichier.close   
